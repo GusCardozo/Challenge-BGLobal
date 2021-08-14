@@ -14,12 +14,12 @@ namespace Challenge.BGLobal.Models
         [MaxLength(8)]
         public string Patent { get; set; }
         [Required]
-        public string Brand { get; set; }
-        [Required]
         public string Model { get; set; }
         [Required]
         public int Doors { get; set; }
         [Required]
         public string Titular { get; set; }
+        public int BrandId { get; set; }
+        public Brand Brand { get; set; }
     }
 }

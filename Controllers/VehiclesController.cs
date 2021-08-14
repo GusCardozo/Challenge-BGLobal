@@ -23,7 +23,7 @@ namespace Challenge.BGLobal.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var bGlobalContext = _context.Vehicles;
+            var bGlobalContext = _context.Vehicles.Include(v => v.Brand);
             return View(await bGlobalContext.ToListAsync());
         }
 
@@ -35,6 +35,7 @@ namespace Challenge.BGLobal.Controllers
             }
 
             var vehicle = await _context.Vehicles
+                .Include(v => v.Brand)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (vehicle == null)
             {
@@ -49,17 +50,13 @@ namespace Challenge.BGLobal.Controllers
             int page1 = 1;
             int page2 = 2;
 
-            List<string> brands = new()
-            {
-                "Ford", "Fiat", "Peugeot", "Mercedes Benz", "Audi", "BMW", "Renault"
-            };
             List<string> titulars = new();
 
             ListTitular(titulars, page1);
             ListTitular(titulars, page2);
 
-            ViewData["Brands"] = new SelectList(brands);
             ViewData["Titulars"] = new SelectList(titulars);
+            ViewData["Brands"] = new SelectList(_context.Brands, "Id", "Name");
             return View();
         }
 
@@ -87,7 +84,7 @@ namespace Challenge.BGLobal.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Patent,Brand,Model,Doors,Titular")] Vehicle vehicle)
+        public async Task<IActionResult> Create([Bind("Id,Patent,Model,Doors,Titular,BrandId")] Vehicle vehicle)
         {
             if (ModelState.IsValid)
             {
@@ -99,23 +96,13 @@ namespace Challenge.BGLobal.Controllers
             int page1 = 1;
             int page2 = 2;
 
-            List<string> brands = new()
-            {
-                "Ford",
-                "Fiat",
-                "Peugeot",
-                "Mercedes Benz",
-                "Audi",
-                "BMW",
-                "Renault"
-            };
             List<string> titulars = new();
 
             ListTitular(titulars, page1);
             ListTitular(titulars, page2);
 
-            ViewData["Brands"] = new SelectList(brands);
             ViewData["Titulars"] = new SelectList(titulars);
+            ViewData["Brands"] = new SelectList(_context.Brands, "Id", "Name", vehicle.BrandId);
 
             return View(vehicle);
         }
@@ -136,30 +123,20 @@ namespace Challenge.BGLobal.Controllers
             int page1 = 1;
             int page2 = 2;
 
-            List<string> brands = new()
-            {
-                "Ford",
-                "Fiat",
-                "Peugeot",
-                "Mercedes Benz",
-                "Audi",
-                "BMW",
-                "Renault"
-            };
             List<string> titulars = new();
 
             ListTitular(titulars, page1);
             ListTitular(titulars, page2);
 
-            ViewData["Brands"] = new SelectList(brands);
             ViewData["Titulars"] = new SelectList(titulars);
+            ViewData["Brands"] = new SelectList(_context.Brands, "Id", "Name", vehicle.BrandId);
 
             return View(vehicle);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Patent,Brand,Model,Doors,Titular")] Vehicle vehicle)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Patent,Model,Doors,Titular,BrandId")] Vehicle vehicle)
         {
             if (id != vehicle.Id)
             {
@@ -190,23 +167,13 @@ namespace Challenge.BGLobal.Controllers
             int page1 = 1;
             int page2 = 2;
 
-            List<string> brands = new()
-            {
-                "Ford",
-                "Fiat",
-                "Peugeot",
-                "Mercedes Benz",
-                "Audi",
-                "BMW",
-                "Renault"
-            };
             List<string> titulars = new();
 
             ListTitular(titulars, page1);
             ListTitular(titulars, page2);
 
-            ViewData["Brands"] = new SelectList(brands);
             ViewData["Titulars"] = new SelectList(titulars);
+            ViewData["Brands"] = new SelectList(_context.Brands, "Id", "Name", vehicle.BrandId);
 
             return View(vehicle);
         }
@@ -219,7 +186,9 @@ namespace Challenge.BGLobal.Controllers
             }
 
             var vehicle = await _context.Vehicles
+                .Include(v => v.Brand)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (vehicle == null)
             {
                 return NotFound();
